@@ -1,7 +1,7 @@
 import unittest
 
 
-from algostruct.tree.btree import BinaryTree, BinaryNode
+from algostruct.tree.btree import *
 
 
 class TestBTree(unittest.TestCase):
@@ -78,3 +78,43 @@ class TestBTree(unittest.TestCase):
         tree.add(8)
         sorting = tree.sorted()
         self.assertEqual(sorting, [3, 4, 5, 6, 7, 8])
+
+    def test_in_order_iterator_1(self):
+        #     5
+        #    / \
+        #   4   6
+        #  /     \
+        # 3       7
+        #          \
+        #           8
+        tree = BinaryTree(5)
+        tree.add(4)
+        tree.add(3)
+        tree.add(6)
+        tree.add(7)
+        tree.add(8)
+        iterator = InOrderIterator(tree)
+        values = []
+        for node in iterator:
+            values.append(node.value)
+        self.assertEqual(values, [3, 4, 5, 6, 7, 8])
+
+    def test_pre_order_iterator_1(self):
+        #     5
+        #    / \
+        #   4   6
+        #  /     \
+        # 3       7
+        #          \
+        #           8
+        tree = BinaryTree(5)
+        tree.add(4)
+        tree.add(3)
+        tree.add(6)
+        tree.add(7)
+        tree.add(8)
+        iterator = PreOrderIterator(tree)
+        values = []
+        for node in iterator:
+            values.append(node.value)
+        self.assertEqual(values, [5, 4, 3, 6, 7, 8])
