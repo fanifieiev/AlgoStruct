@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic, List
+from typing import Tuple, TypeVar, Generic, List
 
 V = TypeVar("V")
 
@@ -37,7 +37,7 @@ class BinaryTree(Generic[V]):
             else:
                 self._add_to(node.right, value)
 
-    def nodeOf(self, value: V) -> BinaryNode[V]:
+    def node_of(self, value: V) -> BinaryNode[V]:
         def _nodeOf(node: BinaryNode[V], value: V):
             if node is None:
                 return None
@@ -49,23 +49,32 @@ class BinaryTree(Generic[V]):
                 return _nodeOf(node.right, value)
         return _nodeOf(self.root, value)
 
-    def max(self) -> BinaryNode[V]:
-        def _max(node: BinaryNode[V]) -> BinaryNode[V]:
-            if node.right is None:
-                return node
+    def node_and_parent_of(self, value: V) -> Tuple[BinaryNode[V], BinaryNode[V]]:
+        def _nodeOf(node, parent, value):
+            if node is None:
+                return None
+            elif node.value == value:
+                return (node, parent)
+            elif node.value > value:
+                return _nodeOf(node.left, node, value)
             else:
-                return _max(node.right)
+                return _nodeOf(node.right, node, value)
+        return _nodeOf(self.root, None, value)
 
-        return _max(self.root)
+    def max(self) -> BinaryNode[V]:
+        node = self.root
+        while node.right:
+            node = node.right
+        return node
 
     def min(self) -> BinaryNode[V]:
-        def _min(node: BinaryNode[V]) -> BinaryNode[V]:
-            if node.left is None:
-                return node
-            else:
-                return _min(node.left)
+        return self.min_of(self.root)
 
-        return _min(self.root)
+    def min_of(self, node: BinaryNode[V]) -> BinaryNode[V]:
+        while node.left:
+            node = node.left
+        return node
+    
 
     def is_empty(self) -> bool:
         return self.root is None or self.root.value is None
@@ -85,27 +94,39 @@ class BinaryTree(Generic[V]):
             values.append(node.value)
         return values
 
-    def _in_order(self, node: BinaryNode[V], action):
-        if node.left:
-            self._in_order(node.left, action)
-        action(node)
-        if node.right:
-            self._in_order(node.right, action)
+    def remove(self, value: V):
+        def _remove_node(node, value):
+            if node is None:
+                return None
+            elif value < node.value:
+                node.left = _remove_node(node.left, value)
+            elif value > node.value:
+                node.right = _remove_node(node.right, value)
+            else:
+                if node.left is None:
+                    return node.right
+                elif node.right is None:
+                    return node.left
+                else:
+                    leftmost = self.min_of(node.right)
+                    node.value = leftmost.value
+                    node.right = _remove_node(node.right, value)
+            return node
+        _remove_node(self.root, value)
 
-    def _pre_order(self, node: BinaryNode[V], action):
-        action(node)
-        if node.left:
-            self._pre_order(node.left, action)
 
-        if node.right:
-            self._pre_order(node.right, action)
+class BreadFirstIterator(Generic[V]):
+    """
+    """
 
-    def _post_order(self, node: BinaryNode[V], action):
-        if node.left:
-            self._post_order(node.left, action)
-        if node.right:
-            self._post_order(node.right, action)
-        action(node)
+    def __init__(self, tree: BinaryTree[V]) -> None:
+        self.queue = [tree.root]
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> BinaryNode[V]:
+        pass
 
 
 class PreOrderIterator(Generic[V]):

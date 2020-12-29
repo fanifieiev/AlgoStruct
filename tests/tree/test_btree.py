@@ -36,15 +36,15 @@ class TestBTree(unittest.TestCase):
         tree.add(1)
         self.assertEqual(tree.min().value, 1)
 
-    def test_nodeOf_1(self):
+    def test_node_of_1(self):
         tree = BinaryTree(5)
         tree.add(6)
-        self.assertEqual(tree.nodeOf(6).value, 6)
+        self.assertEqual(tree.node_of(6).value, 6)
 
-    def test_nodeOf_2(self):
+    def test_node_of_2(self):
         tree = BinaryTree(5)
         tree.add(6)
-        node = tree.nodeOf(10)
+        node = tree.node_of(10)
         print(node)
         self.assertEqual(node, None)
 
@@ -118,3 +118,59 @@ class TestBTree(unittest.TestCase):
         for node in iterator:
             values.append(node.value)
         self.assertEqual(values, [5, 4, 3, 6, 7, 8])
+
+
+    def test_remove_node_1(self):
+        #     5
+        #    / \
+        #   4   6
+        #  /     \
+        # 3(d)    7
+        #          \
+        #           8
+        tree = BinaryTree(5)
+        tree.add(4)
+        tree.add(3)
+        tree.add(6)
+        tree.add(7)
+        tree.add(8)
+        tree.remove(3)
+        node = tree.node_of(4)
+        self.assertEqual(node.left, None) 
+
+    def test_remove_node_2(self):
+        #     5
+        #    / \
+        #   4   6
+        #  /     \
+        # 3       7(d)
+        #          \
+        #           8
+        tree = BinaryTree(5)
+        tree.add(4)
+        tree.add(3)
+        tree.add(6)
+        tree.add(7)
+        tree.add(8)
+        tree.remove(7)
+
+    def test_remove_node_3(self):
+        #     5
+        #    / \
+        #   4   9
+        #  /   / \
+        # 3   8   11
+        #         / 
+        #        10   
+        tree = BinaryTree(5)
+        tree.add(4)
+        tree.add(3)
+        tree.add(9)
+        tree.add(8)
+        tree.add(11)
+        tree.add(10)
+        tree.remove(9)    
+
+        node = tree.node_of(10)
+        self.assertEqual(node.right.value, 11)
+        self.assertEqual(node.left.value, 8)   
