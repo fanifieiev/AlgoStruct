@@ -7,11 +7,11 @@ from algostruct.tree.btree import *
 class TestBTree(unittest.TestCase):
 
     def test_max_1(self):
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         self.assertEqual(tree.max().value, 5)
 
     def test_max_2(self):
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(3)
         tree.add(1)
         tree.add(4)
@@ -19,17 +19,17 @@ class TestBTree(unittest.TestCase):
         self.assertEqual(tree.max().value, 5)
 
     def test_max_3(self):
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(3)
         tree.add(6)
         self.assertEqual(tree.max().value, 6)
 
     def test_min_1(self):
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         self.assertEqual(tree.min().value, 5)
 
     def test_min_2(self):
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(6)
         tree.add(7)
         tree.add(8)
@@ -37,12 +37,12 @@ class TestBTree(unittest.TestCase):
         self.assertEqual(tree.min().value, 1)
 
     def test_node_of_1(self):
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(6)
         self.assertEqual(tree.node_of(6).value, 6)
 
     def test_node_of_2(self):
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(6)
         node = tree.node_of(10)
         print(node)
@@ -60,7 +60,7 @@ class TestBTree(unittest.TestCase):
         # 3       7
         #          \
         #           8
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(4)
         tree.add(3)
         tree.add(6)
@@ -70,7 +70,7 @@ class TestBTree(unittest.TestCase):
         self.assertEqual(height, 4)
 
     def test_sorted(self):
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(4)
         tree.add(3)
         tree.add(6)
@@ -87,7 +87,7 @@ class TestBTree(unittest.TestCase):
         # 3       7
         #          \
         #           8
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(4)
         tree.add(3)
         tree.add(6)
@@ -107,7 +107,7 @@ class TestBTree(unittest.TestCase):
         # 3       7
         #          \
         #           8
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(4)
         tree.add(3)
         tree.add(6)
@@ -119,7 +119,6 @@ class TestBTree(unittest.TestCase):
             values.append(node.value)
         self.assertEqual(values, [5, 4, 3, 6, 7, 8])
 
-
     def test_remove_node_1(self):
         #     5
         #    / \
@@ -128,7 +127,7 @@ class TestBTree(unittest.TestCase):
         # 3(d)    7
         #          \
         #           8
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(4)
         tree.add(3)
         tree.add(6)
@@ -136,7 +135,7 @@ class TestBTree(unittest.TestCase):
         tree.add(8)
         tree.remove(3)
         node = tree.node_of(4)
-        self.assertEqual(node.left, None) 
+        self.assertEqual(node.left, None)
 
     def test_remove_node_2(self):
         #     5
@@ -146,7 +145,7 @@ class TestBTree(unittest.TestCase):
         # 3       7(d)
         #          \
         #           8
-        tree = BinaryTree(5)
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(4)
         tree.add(3)
         tree.add(6)
@@ -160,17 +159,56 @@ class TestBTree(unittest.TestCase):
         #   4   9
         #  /   / \
         # 3   8   11
-        #         / 
-        #        10   
-        tree = BinaryTree(5)
+        #         /
+        #        10
+        tree = BinaryTree[int](BinaryNode[int](5))
         tree.add(4)
         tree.add(3)
         tree.add(9)
         tree.add(8)
         tree.add(11)
         tree.add(10)
-        tree.remove(9)    
+        tree.remove(9)
 
         node = tree.node_of(10)
         self.assertEqual(node.right.value, 11)
-        self.assertEqual(node.left.value, 8)   
+        self.assertEqual(node.left.value, 8)
+
+    def test_clone_1(self):
+        #     5
+        #    / \
+        #   4   9
+        tree = BinaryTree[int](BinaryNode[int](5))
+        tree.add(4)
+        tree.add(9)
+
+        cloned_tree = tree.clone()
+        self.assertEqual(cloned_tree.head().right.value, 9)
+
+    def test_reverted_1(self):
+        #     5
+        #    / \
+        #   4   9
+        #  /   / \
+        # 3   8   11
+        #         /
+        #        10
+        tree = BinaryTree[int](BinaryNode[int](5))
+        tree.add(4)
+        tree.add(3)
+        tree.add(9)
+        tree.add(8)
+        tree.add(11)
+        tree.add(10)
+        
+        reverted: BinaryTree[int] = tree.reverted()
+        #     5
+        #   /   \    
+        #  9     4
+        # / \     \
+        # 11  8     3
+        #     \
+        #      10
+        node1 = reverted.node_of(5)
+        self.assertEqual(node1.right.value, 4)
+        self.assertEqual(node1.left.value, 9)

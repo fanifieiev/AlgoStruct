@@ -19,8 +19,11 @@ class BinaryTree(Generic[V]):
     docstring
     """
 
-    def __init__(self, value: V):
-        self.root = BinaryNode(value)
+    def __init__(self, node: BinaryNode[V]):
+        self.root = node
+
+    def head(self) -> BinaryNode:
+        return self.root    
 
     def add(self, value: V) -> None:
         self._add_to(self.root, value)
@@ -74,7 +77,6 @@ class BinaryTree(Generic[V]):
         while node.left:
             node = node.left
         return node
-    
 
     def is_empty(self) -> bool:
         return self.root is None or self.root.value is None
@@ -114,13 +116,34 @@ class BinaryTree(Generic[V]):
             return node
         _remove_node(self.root, value)
 
+    def reverted(self):
+        def revert(node):
+            if node:
+                node.left, node.right = node.right, node.left
+                revert(node.left)
+                revert(node.right)
+        cloned = self.clone()
+        revert(cloned.root)
+        return cloned
+
+    def clone(self):
+        def clone_node(node):
+            if node:
+                new_node = BinaryNode(node.value)
+                new_node.left=clone_node(node.left)
+                new_node.right=clone_node(node.right)
+                return new_node
+            return None
+        cloned = clone_node(self.root)    
+        return BinaryTree(cloned)
+
 
 class BreadFirstIterator(Generic[V]):
     """
     """
 
     def __init__(self, tree: BinaryTree[V]) -> None:
-        self.queue = [tree.root]
+        self.queue=[tree.root]
 
     def __iter__(self):
         return self
@@ -134,14 +157,14 @@ class PreOrderIterator(Generic[V]):
     """
 
     def __init__(self, tree: BinaryTree[V]) -> None:
-        self.stack = [tree.root]
+        self.stack=[tree.root]
 
     def __iter__(self):
         return self
 
     def __next__(self) -> BinaryNode[V]:
         if len(self.stack) > 0:
-            node = self.stack.pop()
+            node=self.stack.pop()
             if node.right:
                 self.stack.append(node.right)
             if node.left:
@@ -157,8 +180,8 @@ class InOrderIterator(Generic[V]):
     """
 
     def __init__(self, tree: BinaryTree[V]) -> None:
-        self.node = tree.root
-        self.stack = []
+        self.node=tree.root
+        self.stack=[]
         self._push_left(self.node)
 
     def __iter__(self):
@@ -166,7 +189,7 @@ class InOrderIterator(Generic[V]):
 
     def __next__(self) -> BinaryNode[V]:
         if len(self.stack) > 0:
-            node = self.stack.pop()
+            node=self.stack.pop()
             self._push_left(node.right)
             return node
         else:
@@ -175,4 +198,4 @@ class InOrderIterator(Generic[V]):
     def _push_left(self, node: BinaryNode[V]):
         while node:
             self.stack.append(node)
-            node = node.left
+            node=node.left
