@@ -174,6 +174,30 @@ class TestBTree(unittest.TestCase):
         self.assertEqual(node.right.value, 11)
         self.assertEqual(node.left.value, 8)
 
+    def test_remove_node_4(self):
+        #     5
+        #    / \
+        #   4   9
+        #  /   / \
+        # 3   8   11
+        #         /
+        #        10
+        tree = BinaryTree[int](BinaryNode[int](5))
+        tree.add(4)
+        tree.add(3)
+        tree.add(9)
+        tree.add(8)
+        tree.add(11)
+        tree.add(10)
+        tree.remove(5)
+
+        node8 = tree.node_of(8)
+        self.assertEqual(node8.right.value, 9)
+        self.assertEqual(node8.left.value, 4)
+        node9 = node8.right
+        self.assertEqual(node9.right.value, 11)
+        self.assertEqual(node9.left, None)
+        
     def test_clone_1(self):
         #     5
         #    / \
@@ -200,10 +224,10 @@ class TestBTree(unittest.TestCase):
         tree.add(8)
         tree.add(11)
         tree.add(10)
-        
+
         reverted: BinaryTree[int] = tree.reverted()
         #     5
-        #   /   \    
+        #   /   \
         #  9     4
         # / \     \
         # 11  8     3

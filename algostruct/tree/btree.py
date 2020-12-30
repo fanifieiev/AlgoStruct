@@ -112,7 +112,7 @@ class BinaryTree(Generic[V]):
                 else:
                     leftmost = self.min_of(node.right)
                     node.value = leftmost.value
-                    node.right = _remove_node(node.right, value)
+                    node.right = _remove_node(node.right, leftmost.value)
             return node
         _remove_node(self.root, value)
 
