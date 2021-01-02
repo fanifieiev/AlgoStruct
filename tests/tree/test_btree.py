@@ -81,23 +81,42 @@ class TestBTree(unittest.TestCase):
 
     def test_in_order_iterator_1(self):
         #     5
-        #    / \
-        #   4   6
-        #  /     \
-        # 3       7
-        #          \
-        #           8
+        #   /   \
+        #  3     7
+        #   \   / \
+        #    4 6   8
         tree = BinaryTree[int](BinaryNode[int](5))
-        tree.add(4)
         tree.add(3)
-        tree.add(6)
+        tree.add(4)
         tree.add(7)
+        tree.add(6)
         tree.add(8)
         iterator = InOrderIterator(tree)
         values = []
         for node in iterator:
             values.append(node.value)
+        print(values)
         self.assertEqual(values, [3, 4, 5, 6, 7, 8])
+        
+    def test_post_order_iterator_1(self):
+        #     5
+        #   /   \
+        #  3     7
+        #   \   / \
+        #    4 6   8
+        # tree = BinaryTree[int](BinaryNode[int](5))
+        # tree.add(3)
+        # tree.add(4)
+        # tree.add(7)
+        # tree.add(6)
+        # tree.add(8)
+        # iterator = PostOrderIterator(tree)
+        # values = []
+        # for node in iterator:
+        #     values.append(node.value)
+        # print(values)
+        # self.assertEqual(values, [4, 3, 6, 8, 7, 5])
+        pass    
 
     def test_pre_order_iterator_1(self):
         #     5
@@ -118,6 +137,25 @@ class TestBTree(unittest.TestCase):
         for node in iterator:
             values.append(node.value)
         self.assertEqual(values, [5, 4, 3, 6, 7, 8])
+
+    def test_breadth_first_iterator_1(self):
+        #     5
+        #   /   \
+        #  3     7
+        #   \   / \
+        #    4 6   8
+        tree = BinaryTree[int](BinaryNode[int](5))
+        tree.add(3)
+        tree.add(4)
+        tree.add(7)
+        tree.add(6)
+        tree.add(8)
+        iterator = BreadFirstIterator(tree)
+        values = []
+        for node in iterator:
+            values.append(node.value)
+        print(values)
+        self.assertEqual(values, [5, 3, 7, 4, 6, 8])
 
     def test_remove_node_1(self):
         #     5

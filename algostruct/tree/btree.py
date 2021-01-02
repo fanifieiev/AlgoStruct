@@ -1,4 +1,5 @@
 from typing import Tuple, TypeVar, Generic, List
+from collections import deque
 
 V = TypeVar("V")
 
@@ -23,7 +24,7 @@ class BinaryTree(Generic[V]):
         self.root = node
 
     def head(self) -> BinaryNode:
-        return self.root    
+        return self.root
 
     def add(self, value: V) -> None:
         self._add_to(self.root, value)
@@ -130,26 +131,36 @@ class BinaryTree(Generic[V]):
         def clone_node(node):
             if node:
                 new_node = BinaryNode(node.value)
-                new_node.left=clone_node(node.left)
-                new_node.right=clone_node(node.right)
+                new_node.left = clone_node(node.left)
+                new_node.right = clone_node(node.right)
                 return new_node
             return None
-        cloned = clone_node(self.root)    
+        cloned = clone_node(self.root)
         return BinaryTree(cloned)
 
 
 class BreadFirstIterator(Generic[V]):
     """
+    Breadth first traversing iterator
     """
 
     def __init__(self, tree: BinaryTree[V]) -> None:
-        self.queue=[tree.root]
+        self.queue = deque()
+        self.queue.append(tree.head())
 
     def __iter__(self):
         return self
 
     def __next__(self) -> BinaryNode[V]:
-        pass
+        if len(self.queue) > 0:
+            node = self.queue.popleft()
+            if node.left:
+                self.queue.append(node.left)
+            if node.right:
+                self.queue.append(node.right)    
+            return node
+        else:
+            raise StopIteration
 
 
 class PreOrderIterator(Generic[V]):
@@ -157,14 +168,15 @@ class PreOrderIterator(Generic[V]):
     """
 
     def __init__(self, tree: BinaryTree[V]) -> None:
-        self.stack=[tree.root]
+        self.stack = deque()
+        self.stack.append(tree.root)
 
     def __iter__(self):
         return self
 
     def __next__(self) -> BinaryNode[V]:
         if len(self.stack) > 0:
-            node=self.stack.pop()
+            node = self.stack.pop()
             if node.right:
                 self.stack.append(node.right)
             if node.left:
@@ -180,8 +192,8 @@ class InOrderIterator(Generic[V]):
     """
 
     def __init__(self, tree: BinaryTree[V]) -> None:
-        self.node=tree.root
-        self.stack=[]
+        self.node = tree.head()
+        self.stack = deque()
         self._push_left(self.node)
 
     def __iter__(self):
@@ -189,7 +201,7 @@ class InOrderIterator(Generic[V]):
 
     def __next__(self) -> BinaryNode[V]:
         if len(self.stack) > 0:
-            node=self.stack.pop()
+            node = self.stack.pop()
             self._push_left(node.right)
             return node
         else:
@@ -198,4 +210,32 @@ class InOrderIterator(Generic[V]):
     def _push_left(self, node: BinaryNode[V]):
         while node:
             self.stack.append(node)
-            node=node.left
+            node = node.left
+
+
+class PostOrderIterator(Generic[V]):
+    """
+    Post order traversal iterator based on stack
+    """
+
+    def __init__(self, tree: BinaryTree[V]) -> None:
+        self.stack = deque()
+        self.node = tree.head()
+        self.previous = None
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> BinaryNode[V]:
+        if self.node != None or len(self.stack) != 0:
+            if self.node != None:
+                self.stack.append(self.node)
+                self.node.left
+            else:
+                self.node = self.stack[-1]
+                if self.node.right == None or self.node == self.previous:
+                    pass
+                else:
+                    pass
+        else:
+            raise StopIteration
